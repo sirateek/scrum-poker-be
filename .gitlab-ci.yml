@@ -1,0 +1,45 @@
+variables:
+  SERVICE_NAME: task-service
+
+stages:
+  - test
+  - build
+
+test:go:
+  stage: test
+  tags:
+    - belle-cluster
+  image: golang:1.20.7-alpine3.18
+  script:
+    - apk add git
+    - |
+      cat > ~/.netrc << EOF
+      machine gitlab.com
+      login gitlab-ci-token
+      password $CI_JOB_TOKEN
+    - go mod download
+    - CGO_ENABLED=1 go test -race ./...
+
+build:docker:
+  stage: build
+  tags:
+    - belle-cluster
+  image:
+      name: gcr.io/kaniko-project/executor:v1.9.0-debug
+      entrypoint: [ "" ]
+  script:
+    - mkdir -p /kaniko/.docker/
+    - >-
+      echo "{
+        \"auths\": {
+          \"$DOCKER_REGISTRY\": {\"username\": \"$DOCKER_REGISTRY_USERNAME\", \"password\": \"$DOCKER_REGISTRY_PASSWORD\"}
+        }
+      }" > /kaniko/.docker/config.json
+
+    - /kaniko/executor \
+      -c "${CI_PROJECT_DIR}" \
+      -f "${CI_PROJECT_DIR}/Dockerfile" \
+      --cache-repo ${CONTAINER_REGISTRY}/${IMAGE_NAME} \
+      --cache=true \
+      --cache-ttl $CACHE_TTL \
+      $DOCKER_REGISTRY/$SERVICE_NAME:$CI_COMMIT_SHORT_SHA
