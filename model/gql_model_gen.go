@@ -7,8 +7,30 @@ type Card struct {
 	DisplayValue string `json:"DisplayValue"`
 }
 
+type CreateRoom struct {
+	Name     string `json:"Name"`
+	Passcode string `json:"Passcode"`
+	DeckID   string `json:"DeckID"`
+}
+
 type Deck struct {
 	ID    string  `json:"ID"`
 	Name  string  `json:"Name"`
 	Cards []*Card `json:"Cards"`
+}
+
+type Player struct {
+	ID          string `json:"ID"`
+	Name        string `json:"Name"`
+	HideCard    *bool  `json:"HideCard,omitempty"`
+	PickedCard  *int   `json:"PickedCard,omitempty"`
+	IsSpectator *bool  `json:"IsSpectator,omitempty"`
+}
+
+type Room struct {
+	ID       string    `json:"ID"`
+	Name     string    `json:"Name"`
+	Deck     *Deck     `json:"Deck"`
+	Passcode *string   `json:"Passcode,omitempty"`
+	Players  []*Player `json:"Players"`
 }

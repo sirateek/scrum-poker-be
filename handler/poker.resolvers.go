@@ -6,10 +6,21 @@ package handler
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/sirateek/poker-be/graph"
 	"github.com/sirateek/poker-be/model"
 )
+
+// JoinRoom is the resolver for the joinRoom field.
+func (r *mutationResolver) JoinRoom(ctx context.Context, id string, passcode string) (*model.Room, error) {
+	panic(fmt.Errorf("not implemented: JoinRoom - joinRoom"))
+}
+
+// CreateRoom is the resolver for the createRoom field.
+func (r *mutationResolver) CreateRoom(ctx context.Context, room *model.CreateRoom) (*model.Room, error) {
+	panic(fmt.Errorf("not implemented: CreateRoom - createRoom"))
+}
 
 // GetDeck is the resolver for the getDeck field.
 func (r *queryResolver) GetDeck(ctx context.Context, id string) (*model.Deck, error) {
@@ -21,7 +32,11 @@ func (r *queryResolver) GetAvailableDecks(ctx context.Context) ([]*model.Deck, e
 	return r.DeckService.GetAllAvailableDecks(), nil
 }
 
+// Mutation returns graph.MutationResolver implementation.
+func (r *Resolver) Mutation() graph.MutationResolver { return &mutationResolver{r} }
+
 // Query returns graph.QueryResolver implementation.
 func (r *Resolver) Query() graph.QueryResolver { return &queryResolver{r} }
 
+type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

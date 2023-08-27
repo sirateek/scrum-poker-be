@@ -9,7 +9,34 @@ type Card {
     DisplayValue: String!
 }
 
+type Room {
+    ID: String!
+    Name: String!
+    Deck: Deck!
+    Passcode: String
+    Players: [Player]!
+}
+
+type Player {
+    ID: String!
+    Name: String!
+    HideCard: Boolean
+    PickedCard: Int
+    IsSpectator: Boolean
+}
+
+input CreateRoom {
+    Name: String!
+    Passcode: String!
+    DeckID: String!
+}
+
 type Query {
     getDeck(ID: String!): Deck
     getAvailableDecks: [Deck]
+}
+
+type Mutation {
+    joinRoom(ID: String!, Passcode: String!): Room
+    createRoom(room: CreateRoom): Room
 }
