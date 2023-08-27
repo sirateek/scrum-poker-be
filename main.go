@@ -8,8 +8,8 @@ import (
 	"github.com/sirateek/poker-be/config"
 	"github.com/sirateek/poker-be/graph"
 	"github.com/sirateek/poker-be/handler"
+	"github.com/sirateek/poker-be/internal/deck"
 	"github.com/sirateek/poker-be/pkg/httpserver"
-	"github.com/sirateek/poker-be/services"
 	"github.com/sirateek/poker-be/utils"
 )
 
@@ -30,7 +30,7 @@ func main() {
 	decks := deckParser.Parse(appConfig.Decks)
 
 	// Service
-	deckService := services.NewDeck(decks)
+	deckService := deck.NewDeck(decks)
 
 	if appConfig.Env != "prod" {
 		server.Engine.GET("/playground", gin.WrapH(playground.Handler("GraphQL playground", "/query")))

@@ -1,4 +1,4 @@
-package services
+package deck
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ type deckService struct {
 	decksMap map[string]*model.Deck
 }
 
-type Deck interface {
+type Service interface {
 	GetAllAvailableDecks() []*model.Deck
 	GetDeck(id string) (*model.Deck, error)
 }
@@ -19,7 +19,7 @@ var (
 	ErrDeckNotFound = errors.New("deck not found")
 )
 
-func NewDeck(decks []*model.Deck) Deck {
+func NewDeck(decks []*model.Deck) Service {
 	decksMap := make(map[string]*model.Deck)
 	for _, deck := range decks {
 		decksMap[deck.ID] = deck
