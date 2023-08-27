@@ -1,0 +1,18 @@
+appConfig:
+  port: 3001
+  ginMode: release
+decks:
+    - id: classic
+      name: Normal Poke Deck
+      cards:
+        - 0
+        - 0.5
+        - 1
+        - 2
+        - 3
+        - 5
+        - 8
+        - 13
+        - 20
+        - 40
+        - 100

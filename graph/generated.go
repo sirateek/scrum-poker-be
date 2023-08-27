@@ -57,12 +57,12 @@ type ComplexityRoot struct {
 
 	Query struct {
 		GetAvailableDecks func(childComplexity int) int
-		GetDeck           func(childComplexity int, id *string) int
+		GetDeck           func(childComplexity int, id string) int
 	}
 }
 
 type QueryResolver interface {
-	GetDeck(ctx context.Context, id *string) (*model.Deck, error)
+	GetDeck(ctx context.Context, id string) (*model.Deck, error)
 	GetAvailableDecks(ctx context.Context) ([]*model.Deck, error)
 }
 
@@ -133,7 +133,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetDeck(childComplexity, args["ID"].(*string)), true
+		return e.complexity.Query.GetDeck(childComplexity, args["ID"].(string)), true
 
 	}
 	return 0, false
@@ -261,10 +261,10 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_getDeck_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *string
+	var arg0 string
 	if tmp, ok := rawArgs["ID"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ID"))
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -551,7 +551,7 @@ func (ec *executionContext) _Query_getDeck(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetDeck(rctx, fc.Args["ID"].(*string))
+		return ec.resolvers.Query().GetDeck(rctx, fc.Args["ID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -622,7 +622,7 @@ func (ec *executionContext) _Query_getAvailableDecks(ctx context.Context, field 
 	}
 	res := resTmp.([]*model.Deck)
 	fc.Result = res
-	return ec.marshalODeck2ᚕᚖgithubᚗcomᚋsirateekᚋpokerᚑbeᚋmodelᚐDeckᚄ(ctx, field.Selections, res)
+	return ec.marshalODeck2ᚕᚖgithubᚗcomᚋsirateekᚋpokerᚑbeᚋmodelᚐDeck(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getAvailableDecks(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3116,16 +3116,6 @@ func (ec *executionContext) marshalNCard2ᚕᚖgithubᚗcomᚋsirateekᚋpoker�
 	return ret
 }
 
-func (ec *executionContext) marshalNDeck2ᚖgithubᚗcomᚋsirateekᚋpokerᚑbeᚋmodelᚐDeck(ctx context.Context, sel ast.SelectionSet, v *model.Deck) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Deck(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
 	res, err := graphql.UnmarshalInt(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3442,7 +3432,7 @@ func (ec *executionContext) marshalOCard2ᚖgithubᚗcomᚋsirateekᚋpokerᚑbe
 	return ec._Card(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalODeck2ᚕᚖgithubᚗcomᚋsirateekᚋpokerᚑbeᚋmodelᚐDeckᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Deck) graphql.Marshaler {
+func (ec *executionContext) marshalODeck2ᚕᚖgithubᚗcomᚋsirateekᚋpokerᚑbeᚋmodelᚐDeck(ctx context.Context, sel ast.SelectionSet, v []*model.Deck) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -3469,7 +3459,7 @@ func (ec *executionContext) marshalODeck2ᚕᚖgithubᚗcomᚋsirateekᚋpoker�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNDeck2ᚖgithubᚗcomᚋsirateekᚋpokerᚑbeᚋmodelᚐDeck(ctx, sel, v[i])
+			ret[i] = ec.marshalODeck2ᚖgithubᚗcomᚋsirateekᚋpokerᚑbeᚋmodelᚐDeck(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3479,12 +3469,6 @@ func (ec *executionContext) marshalODeck2ᚕᚖgithubᚗcomᚋsirateekᚋpoker�
 
 	}
 	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
 
 	return ret
 }
