@@ -9,6 +9,8 @@ import (
 	"github.com/sirateek/poker-be/graph"
 	"github.com/sirateek/poker-be/handler"
 	"github.com/sirateek/poker-be/pkg/httpserver"
+	"github.com/sirateek/poker-be/services"
+	"github.com/sirateek/poker-be/utils"
 )
 
 var appConfig config.Config
@@ -19,15 +21,24 @@ func init() {
 
 func main() {
 	server := httpserver.NewHttpServer(
-		httpserver.WithListeningAddress(fmt.Sprint(":", appConfig.HttpServerPort)),
-		httpserver.WithCORSConfig(appConfig.CORSConfig),
+		httpserver.WithListeningAddress(fmt.Sprint(":", appConfig.AppConfig.Port)),
+		httpserver.WithCORSConfig(appConfig.AppConfig.CORSConfig),
 	)
+
+	// Parse deck
+	deckParser := utils.NewDeckConfigParser()
+	decks := deckParser.Parse(appConfig.Decks)
+
+	// Service
+	deckService := services.NewDeck(decks)
 
 	if appConfig.Env != "prod" {
 		server.Engine.GET("/playground", gin.WrapH(playground.Handler("GraphQL playground", "/query")))
 	}
 
-	taskGqlHandler := gqlHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &handler.Resolver{}}))
+	taskGqlHandler := gqlHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &handler.Resolver{
+		DeckService: deckService,
+	}}))
 	server.Engine.POST("/query", gin.WrapH(taskGqlHandler))
 
 	// Run the http server

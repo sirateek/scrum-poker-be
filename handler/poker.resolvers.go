@@ -6,35 +6,19 @@ package handler
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/sirateek/poker-be/graph"
 	"github.com/sirateek/poker-be/model"
 )
 
 // GetDeck is the resolver for the getDeck field.
-func (r *queryResolver) GetDeck(ctx context.Context, id *string) (*model.Deck, error) {
-	panic(fmt.Errorf("not implemented: GetDeck - getDeck"))
+func (r *queryResolver) GetDeck(ctx context.Context, id string) (*model.Deck, error) {
+	return r.DeckService.GetDeck(id)
 }
 
 // GetAvailableDecks is the resolver for the getAvailableDecks field.
 func (r *queryResolver) GetAvailableDecks(ctx context.Context) ([]*model.Deck, error) {
-	mocked := []*model.Deck{
-		{
-			ID:   "Test1",
-			Name: "HelloWorld1",
-		},
-		{
-			ID:   "Test2",
-			Name: "HelloWorld2",
-		},
-		{
-			ID:   "Test3",
-			Name: "HelloWorld3",
-		},
-	}
-
-	return mocked, nil
+	return r.DeckService.GetAllAvailableDecks(), nil
 }
 
 // Query returns graph.QueryResolver implementation.
