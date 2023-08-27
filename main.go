@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	gqlHandler "github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-gonic/gin"
 	"github.com/sirateek/poker-be/config"
+	"github.com/sirateek/poker-be/graph"
+	"github.com/sirateek/poker-be/handler"
 	"github.com/sirateek/poker-be/pkg/httpserver"
 )
 
@@ -24,10 +27,8 @@ func main() {
 		server.Engine.GET("/playground", gin.WrapH(playground.Handler("GraphQL playground", "/query")))
 	}
 
-	//taskGqlHandler := gqlHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &handler.Resolver{
-	//	TaskService: taskService,
-	//}}))
-	//server.Engine.POST("/query", gin.WrapH(taskGqlHandler))
+	taskGqlHandler := gqlHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &handler.Resolver{}}))
+	server.Engine.POST("/query", gin.WrapH(taskGqlHandler))
 
 	// Run the http server
 	server.Run()

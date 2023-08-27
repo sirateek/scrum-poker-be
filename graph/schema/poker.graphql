@@ -1,0 +1,15 @@
+type Deck {
+    ID: String!
+    Name: String!
+    Cards: [Card]!
+}
+
+type Card {
+    Index: Int!
+    DisplayValue: String!
+}
+
+type Query {
+    getDeck(ID: String!): Deck
+    getAvailableDecks: [Deck]
+}

@@ -2,22 +2,13 @@
 
 package model
 
-type ActionData struct {
-	ID          string  `json:"ID"`
-	Title       string  `json:"Title"`
-	Description *string `json:"Description,omitempty"`
-	Task        string  `json:"Task"`
-	CreatedBy   *string `json:"CreatedBy,omitempty"`
-	CreatedAt   *int    `json:"CreatedAt,omitempty"`
-	UpdateAt    *int    `json:"UpdateAt,omitempty"`
+type Card struct {
+	Index        int    `json:"Index"`
+	DisplayValue string `json:"DisplayValue"`
 }
 
-type TaskData struct {
-	ID          string        `json:"ID"`
-	Title       string        `json:"Title"`
-	Description *string       `json:"Description,omitempty"`
-	Actions     []*ActionData `json:"Actions,omitempty"`
-	CreatedBy   *string       `json:"CreatedBy,omitempty"`
-	CreatedAt   *int          `json:"CreatedAt,omitempty"`
-	UpdateAt    *int          `json:"UpdateAt,omitempty"`
+type Deck struct {
+	ID    string  `json:"ID"`
+	Name  string  `json:"Name"`
+	Cards []*Card `json:"Cards"`
 }
