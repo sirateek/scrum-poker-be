@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/sirateek/poker-be/internal/deck"
+	"github.com/sirateek/poker-be/internal/room"
 )
 
 // This file will not be regenerated automatically.
@@ -10,4 +11,5 @@ import (
 
 type Resolver struct {
 	DeckService deck.Service
+	RoomService room.Service
 }

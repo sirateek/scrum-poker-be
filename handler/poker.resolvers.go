@@ -18,8 +18,8 @@ func (r *mutationResolver) JoinRoom(ctx context.Context, id string, passcode str
 }
 
 // CreateRoom is the resolver for the createRoom field.
-func (r *mutationResolver) CreateRoom(ctx context.Context, room *model.CreateRoom) (*model.Room, error) {
-	panic(fmt.Errorf("not implemented: CreateRoom - createRoom"))
+func (r *mutationResolver) CreateRoom(_ context.Context, room *model.CreateRoom) (*model.Room, error) {
+	return r.RoomService.CreateRoom(room)
 }
 
 // GetDeck is the resolver for the getDeck field.

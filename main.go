@@ -9,6 +9,7 @@ import (
 	"github.com/sirateek/poker-be/graph"
 	"github.com/sirateek/poker-be/handler"
 	"github.com/sirateek/poker-be/internal/deck"
+	"github.com/sirateek/poker-be/internal/room"
 	"github.com/sirateek/poker-be/pkg/httpserver"
 	"github.com/sirateek/poker-be/utils"
 )
@@ -31,6 +32,7 @@ func main() {
 
 	// Service
 	deckService := deck.NewDeck(decks)
+	roomService := room.NewService(deckService)
 
 	if appConfig.Env != "prod" {
 		server.Engine.GET("/playground", gin.WrapH(playground.Handler("GraphQL playground", "/query")))
@@ -38,6 +40,7 @@ func main() {
 
 	taskGqlHandler := gqlHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &handler.Resolver{
 		DeckService: deckService,
+		RoomService: roomService,
 	}}))
 	server.Engine.POST("/query", gin.WrapH(taskGqlHandler))
 
