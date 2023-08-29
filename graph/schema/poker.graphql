@@ -37,6 +37,6 @@ type Query {
 }
 
 type Mutation {
-    joinRoom(ID: String!, Passcode: String!): Room
+    joinRoom(ID: String!, Passcode: String!): Boolean
     createRoom(room: CreateRoom): Room
 }

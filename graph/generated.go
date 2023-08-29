@@ -84,7 +84,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	JoinRoom(ctx context.Context, id string, passcode string) (*model.Room, error)
+	JoinRoom(ctx context.Context, id string, passcode string) (*bool, error)
 	CreateRoom(ctx context.Context, room *model.CreateRoom) (*model.Room, error)
 }
 type QueryResolver interface {
@@ -736,9 +736,9 @@ func (ec *executionContext) _Mutation_joinRoom(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Room)
+	res := resTmp.(*bool)
 	fc.Result = res
-	return ec.marshalORoom2ᚖgithubᚗcomᚋsirateekᚋpokerᚑbeᚋmodelᚐRoom(ctx, field.Selections, res)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_joinRoom(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -748,19 +748,7 @@ func (ec *executionContext) fieldContext_Mutation_joinRoom(ctx context.Context, 
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "ID":
-				return ec.fieldContext_Room_ID(ctx, field)
-			case "Name":
-				return ec.fieldContext_Room_Name(ctx, field)
-			case "Deck":
-				return ec.fieldContext_Room_Deck(ctx, field)
-			case "Passcode":
-				return ec.fieldContext_Room_Passcode(ctx, field)
-			case "Players":
-				return ec.fieldContext_Room_Players(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Room", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {

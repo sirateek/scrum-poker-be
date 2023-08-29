@@ -13,12 +13,12 @@ import (
 )
 
 // JoinRoom is the resolver for the joinRoom field.
-func (r *mutationResolver) JoinRoom(ctx context.Context, id string, passcode string) (*model.Room, error) {
+func (r *mutationResolver) JoinRoom(ctx context.Context, id string, passcode string) (*bool, error) {
 	panic(fmt.Errorf("not implemented: JoinRoom - joinRoom"))
 }
 
 // CreateRoom is the resolver for the createRoom field.
-func (r *mutationResolver) CreateRoom(_ context.Context, room *model.CreateRoom) (*model.Room, error) {
+func (r *mutationResolver) CreateRoom(ctx context.Context, room *model.CreateRoom) (*model.Room, error) {
 	return r.RoomService.CreateRoom(room)
 }
 
