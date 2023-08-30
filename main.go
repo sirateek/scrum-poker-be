@@ -42,7 +42,7 @@ func main() {
 		DeckService: deckService,
 		RoomService: roomService,
 	}}))
-	server.Engine.POST("/query", gin.WrapH(taskGqlHandler))
+	server.Engine.POST("/query", handler.UseAuth(), gin.WrapH(taskGqlHandler))
 
 	// Run the http server
 	server.Run()
