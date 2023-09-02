@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/sirateek/poker-be/internal/deck"
+	"github.com/sirateek/poker-be/internal/player"
 	"github.com/sirateek/poker-be/internal/room"
 	"github.com/sirateek/poker-be/utils"
 )
@@ -13,5 +14,6 @@ import (
 type Resolver struct {
 	DeckService    deck.Service
 	RoomService    room.Service
+	PlayerService  player.Service
 	ContextManager utils.ContextManager
 }

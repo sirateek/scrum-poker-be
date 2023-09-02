@@ -25,6 +25,11 @@ func (r *mutationResolver) CreateRoom(ctx context.Context, room *model.CreateRoo
 	return r.RoomService.CreateRoom(room)
 }
 
+// RegisterPlayer is the resolver for the registerPlayer field.
+func (r *mutationResolver) RegisterPlayer(ctx context.Context, name string) (*model.Player, error) {
+	return r.PlayerService.RegisterPlayer(name)
+}
+
 // GetDeck is the resolver for the getDeck field.
 func (r *queryResolver) GetDeck(ctx context.Context, id string) (*model.Deck, error) {
 	return r.DeckService.GetDeck(id)

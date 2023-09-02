@@ -11,7 +11,7 @@ type playerService struct {
 }
 
 type Service interface {
-	RegisterPlayer(name string) error
+	RegisterPlayer(name string) (*model.Player, error)
 	GetPlayer(userID string) (*model.Player, error)
 }
 
@@ -25,13 +25,13 @@ func NewService() Service {
 	}
 }
 
-func (p *playerService) RegisterPlayer(name string) error {
+func (p *playerService) RegisterPlayer(name string) (*model.Player, error) {
 	userID := utils.RandStr(30)
 	p.players[userID] = &model.Player{
 		ID:   userID,
 		Name: name,
 	}
-	return nil
+	return p.players[userID], nil
 }
 
 func (p *playerService) GetPlayer(userID string) (*model.Player, error) {

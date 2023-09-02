@@ -3,7 +3,6 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirateek/poker-be/utils"
-	"net/http"
 )
 
 const (
@@ -15,13 +14,9 @@ func UseAuth(contextManager utils.ContextManager) gin.HandlerFunc {
 		ctx := c.Request.Context()
 
 		userID := c.GetHeader(UserIDHeaderKey)
-		if userID == "" {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"message": "unauthorized",
-			})
-			return
+		if userID != "" {
+			ctx = contextManager.SetUserID(ctx, userID)
 		}
-		ctx = contextManager.SetUserID(ctx, userID)
 
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()

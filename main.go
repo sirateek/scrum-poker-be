@@ -46,6 +46,7 @@ func main() {
 	taskGqlHandler := gqlHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &handler.Resolver{
 		DeckService:    deckService,
 		RoomService:    roomService,
+		PlayerService:  playerService,
 		ContextManager: contextManager,
 	}}))
 	server.Engine.POST("/query", handler.UseAuth(contextManager), gin.WrapH(taskGqlHandler))
