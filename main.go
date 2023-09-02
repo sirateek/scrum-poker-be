@@ -34,15 +34,19 @@ func main() {
 	deckService := deck.NewDeck(decks)
 	roomService := room.NewService(deckService)
 
+	// Utils
+	contextManager := utils.ContextManager{}
+
 	if appConfig.Env != "prod" {
 		server.Engine.GET("/playground", gin.WrapH(playground.Handler("GraphQL playground", "/query")))
 	}
 
 	taskGqlHandler := gqlHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &handler.Resolver{
-		DeckService: deckService,
-		RoomService: roomService,
+		DeckService:    deckService,
+		RoomService:    roomService,
+		ContextManager: contextManager,
 	}}))
-	server.Engine.POST("/query", handler.UseAuth(), gin.WrapH(taskGqlHandler))
+	server.Engine.POST("/query", handler.UseAuth(contextManager), gin.WrapH(taskGqlHandler))
 
 	// Run the http server
 	server.Run()

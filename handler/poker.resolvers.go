@@ -7,7 +7,6 @@ package handler
 import (
 	"context"
 	"fmt"
-
 	"github.com/sirateek/poker-be/graph"
 	"github.com/sirateek/poker-be/model"
 )
@@ -29,7 +28,6 @@ func (r *queryResolver) GetDeck(ctx context.Context, id string) (*model.Deck, er
 
 // GetAvailableDecks is the resolver for the getAvailableDecks field.
 func (r *queryResolver) GetAvailableDecks(ctx context.Context) ([]*model.Deck, error) {
-	fmt.Println(ctx.Value("A"))
 	return r.DeckService.GetAllAvailableDecks(), nil
 }
 
