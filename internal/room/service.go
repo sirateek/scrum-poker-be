@@ -1,42 +1,40 @@
 package room
 
 import (
+	"errors"
 	"github.com/sirateek/poker-be/internal/deck"
+	"github.com/sirateek/poker-be/internal/player"
 	"github.com/sirateek/poker-be/model"
+	"github.com/sirateek/poker-be/utils"
 	"github.com/sirupsen/logrus"
-	"math/rand"
 )
 
-// define the given charset, char only
-var charset = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-
-// n is the length of random string we want to generate
-func randStr(n int) string {
-	b := make([]byte, n)
-	for i := range b {
-		// randomly select 1 character from given charset
-		b[i] = charset[rand.Intn(len(charset))]
-	}
-	return string(b)
-}
+var (
+	ErrRoomNotFound  = errors.New("room not found")
+	ErrWrongPasscode = errors.New("wrong passcode")
+)
 
 type roomService struct {
-	rooms       map[string]*model.Room
-	deckService deck.Service
+	rooms         map[string]*model.Room
+	deckService   deck.Service
+	playerService player.Service
 }
 
 type Service interface {
 	CreateRoom(room *model.CreateRoom) (*model.Room, error)
+	JoinRoom(userID string, roomID string, passcode string) (result bool, err error)
 }
 
-func NewService(deckService deck.Service) Service {
+func NewService(deckService deck.Service, playerService player.Service) Service {
 	return &roomService{
-		deckService: deckService,
+		deckService:   deckService,
+		playerService: playerService,
+		rooms:         map[string]*model.Room{},
 	}
 }
 
 func (r *roomService) CreateRoom(room *model.CreateRoom) (*model.Room, error) {
-	id := randStr(10)
+	id := utils.RandStr(10)
 	deckData, err := r.deckService.GetDeck(room.DeckID)
 	if err != nil {
 		logrus.Error("Get Deck Error: ", err)
@@ -50,4 +48,23 @@ func (r *roomService) CreateRoom(room *model.CreateRoom) (*model.Room, error) {
 	}
 
 	return r.rooms[id], nil
+}
+
+func (r *roomService) JoinRoom(userID string, roomID string, passcode string) (result bool, err error) {
+	room, ok := r.rooms[roomID]
+	if !ok || room == nil {
+		return false, ErrRoomNotFound
+	}
+
+	if room.Passcode == nil || passcode != *room.Passcode {
+		return false, ErrWrongPasscode
+	}
+
+	playerData, err := r.playerService.GetPlayer(userID)
+	if err != nil {
+		return false, err
+	}
+
+	room.Players = append(room.Players, playerData)
+	return true, nil
 }

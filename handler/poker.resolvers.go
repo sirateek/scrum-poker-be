@@ -6,14 +6,18 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"github.com/sirateek/poker-be/graph"
 	"github.com/sirateek/poker-be/model"
 )
 
 // JoinRoom is the resolver for the joinRoom field.
 func (r *mutationResolver) JoinRoom(ctx context.Context, id string, passcode string) (*bool, error) {
-	panic(fmt.Errorf("not implemented: JoinRoom - joinRoom"))
+	userID := r.ContextManager.GetUserID(ctx)
+	result, err := r.RoomService.JoinRoom(userID, id, passcode)
+	if err != nil {
+		return &result, err
+	}
+	return &result, nil
 }
 
 // CreateRoom is the resolver for the createRoom field.

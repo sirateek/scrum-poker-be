@@ -9,6 +9,7 @@ import (
 	"github.com/sirateek/poker-be/graph"
 	"github.com/sirateek/poker-be/handler"
 	"github.com/sirateek/poker-be/internal/deck"
+	"github.com/sirateek/poker-be/internal/player"
 	"github.com/sirateek/poker-be/internal/room"
 	"github.com/sirateek/poker-be/pkg/httpserver"
 	"github.com/sirateek/poker-be/utils"
@@ -31,8 +32,9 @@ func main() {
 	decks := deckParser.Parse(appConfig.Decks)
 
 	// Service
+	playerService := player.NewService()
 	deckService := deck.NewDeck(decks)
-	roomService := room.NewService(deckService)
+	roomService := room.NewService(deckService, playerService)
 
 	// Utils
 	contextManager := utils.ContextManager{}
