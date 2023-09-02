@@ -34,6 +34,8 @@ input CreateRoom {
 type Query {
     getDeck(ID: String!): Deck
     getAvailableDecks: [Deck]
+    getRoom(ID: String!): Room
+    getPlayer(ID: String!): Player
 }
 
 type Mutation {

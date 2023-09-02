@@ -23,6 +23,7 @@ type roomService struct {
 type Service interface {
 	CreateRoom(room *model.CreateRoom) (*model.Room, error)
 	JoinRoom(userID string, roomID string, passcode string) (result bool, err error)
+	GetRoom(roomID string) (*model.Room, error)
 }
 
 func NewService(deckService deck.Service, playerService player.Service) Service {
@@ -67,4 +68,12 @@ func (r *roomService) JoinRoom(userID string, roomID string, passcode string) (r
 
 	room.Players = append(room.Players, playerData)
 	return true, nil
+}
+
+func (r *roomService) GetRoom(roomID string) (*model.Room, error) {
+	room, ok := r.rooms[roomID]
+	if !ok {
+		return nil, ErrRoomNotFound
+	}
+	return room, nil
 }

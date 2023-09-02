@@ -40,6 +40,16 @@ func (r *queryResolver) GetAvailableDecks(ctx context.Context) ([]*model.Deck, e
 	return r.DeckService.GetAllAvailableDecks(), nil
 }
 
+// GetRoom is the resolver for the getRoom field.
+func (r *queryResolver) GetRoom(ctx context.Context, id string) (*model.Room, error) {
+	return r.RoomService.GetRoom(id)
+}
+
+// GetPlayer is the resolver for the getPlayer field.
+func (r *queryResolver) GetPlayer(ctx context.Context, id string) (*model.Player, error) {
+	return r.PlayerService.GetPlayer(id)
+}
+
 // Mutation returns graph.MutationResolver implementation.
 func (r *Resolver) Mutation() graph.MutationResolver { return &mutationResolver{r} }
 
