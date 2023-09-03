@@ -57,9 +57,8 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateRoom     func(childComplexity int, room *model.CreateRoom) int
-		JoinRoom       func(childComplexity int, id string, passcode string) int
-		RegisterPlayer func(childComplexity int, name string) int
+		CreateRoom func(childComplexity int, room *model.CreateRoom) int
+		JoinRoom   func(childComplexity int, id string, passcode string) int
 	}
 
 	Player struct {
@@ -89,7 +88,6 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	JoinRoom(ctx context.Context, id string, passcode string) (*bool, error)
 	CreateRoom(ctx context.Context, room *model.CreateRoom) (*model.Room, error)
-	RegisterPlayer(ctx context.Context, name string) (*model.Player, error)
 }
 type QueryResolver interface {
 	GetDeck(ctx context.Context, id string) (*model.Deck, error)
@@ -171,18 +169,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.JoinRoom(childComplexity, args["ID"].(string), args["Passcode"].(string)), true
-
-	case "Mutation.registerPlayer":
-		if e.complexity.Mutation.RegisterPlayer == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_registerPlayer_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.RegisterPlayer(childComplexity, args["name"].(string)), true
 
 	case "Player.HideCard":
 		if e.complexity.Player.HideCard == nil {
@@ -458,21 +444,6 @@ func (ec *executionContext) field_Mutation_joinRoom_args(ctx context.Context, ra
 		}
 	}
 	args["Passcode"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_registerPlayer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["name"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["name"] = arg0
 	return args, nil
 }
 
@@ -910,70 +881,6 @@ func (ec *executionContext) fieldContext_Mutation_createRoom(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createRoom_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_registerPlayer(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_registerPlayer(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RegisterPlayer(rctx, fc.Args["name"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.Player)
-	fc.Result = res
-	return ec.marshalOPlayer2ᚖgithubᚗcomᚋsirateekᚋpokerᚑbeᚋmodelᚐPlayer(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_registerPlayer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "ID":
-				return ec.fieldContext_Player_ID(ctx, field)
-			case "Name":
-				return ec.fieldContext_Player_Name(ctx, field)
-			case "HideCard":
-				return ec.fieldContext_Player_HideCard(ctx, field)
-			case "PickedCard":
-				return ec.fieldContext_Player_PickedCard(ctx, field)
-			case "IsSpectator":
-				return ec.fieldContext_Player_IsSpectator(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Player", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_registerPlayer_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -3741,10 +3648,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "createRoom":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createRoom(ctx, field)
-			})
-		case "registerPlayer":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_registerPlayer(ctx, field)
 			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))

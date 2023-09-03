@@ -6,6 +6,7 @@ package handler
 
 import (
 	"context"
+
 	"github.com/sirateek/poker-be/graph"
 	"github.com/sirateek/poker-be/model"
 )
@@ -23,11 +24,6 @@ func (r *mutationResolver) JoinRoom(ctx context.Context, id string, passcode str
 // CreateRoom is the resolver for the createRoom field.
 func (r *mutationResolver) CreateRoom(ctx context.Context, room *model.CreateRoom) (*model.Room, error) {
 	return r.RoomService.CreateRoom(room)
-}
-
-// RegisterPlayer is the resolver for the registerPlayer field.
-func (r *mutationResolver) RegisterPlayer(ctx context.Context, name string) (*model.Player, error) {
-	return r.PlayerService.RegisterPlayer(name)
 }
 
 // GetDeck is the resolver for the getDeck field.

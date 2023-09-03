@@ -44,6 +44,7 @@ func main() {
 	}
 
 	socketHandler := handler.NewWebSocketHandler(appConfig.AppConfig.MaximumPlayer, playerService)
+	nonGraphHandler := handler.NonGraphHandler{}
 	taskGqlHandler := gqlHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &handler.Resolver{
 		DeckService:    deckService,
 		RoomService:    roomService,
@@ -51,6 +52,7 @@ func main() {
 		ContextManager: contextManager,
 	}}))
 	server.Engine.POST("/query", handler.UseAuth(contextManager), gin.WrapH(taskGqlHandler))
+	server.Engine.POST("/register", nonGraphHandler.RegisterPlayerHandler)
 
 	// Socket
 	server.Engine.GET("/ws", socketHandler.Handle)
