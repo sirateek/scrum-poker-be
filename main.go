@@ -43,6 +43,7 @@ func main() {
 		server.Engine.GET("/playground", gin.WrapH(playground.Handler("GraphQL playground", "/query")))
 	}
 
+	socketHandler := handler.NewWebSocketHandler(appConfig.AppConfig.MaximumPlayer, playerService)
 	taskGqlHandler := gqlHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &handler.Resolver{
 		DeckService:    deckService,
 		RoomService:    roomService,
@@ -50,6 +51,9 @@ func main() {
 		ContextManager: contextManager,
 	}}))
 	server.Engine.POST("/query", handler.UseAuth(contextManager), gin.WrapH(taskGqlHandler))
+
+	// Socket
+	server.Engine.GET("/ws", socketHandler.Handle)
 
 	// Run the http server
 	server.Run()

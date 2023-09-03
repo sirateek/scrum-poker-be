@@ -1,6 +1,7 @@
 appConfig:
   port: 3001
   ginMode: release
+  maximumPlayer: 100
 decks:
     - id: classic
       name: Normal Poke Deck
