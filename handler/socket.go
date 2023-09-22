@@ -1,18 +1,20 @@
 package handler
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/sirateek/poker-be/handler/socketconnection"
+	"github.com/sirateek/poker-be/internal/command"
 	"github.com/sirateek/poker-be/internal/player"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
 type WebSocketHandler struct {
-	webSocketUpgrader websocket.Upgrader
-	playerService     player.Service
-	maximumPlayerSize int
+	webSocketUpgrader    websocket.Upgrader
+	playerService        player.Service
+	socketCommandHandler *command.CommandHandler
+	maximumPlayerSize    int
 }
 
 func NewWebSocketHandler(maxPlayerSize int, playerService player.Service) *WebSocketHandler {
@@ -27,9 +29,10 @@ func NewWebSocketHandler(maxPlayerSize int, playerService player.Service) *WebSo
 	}
 
 	return &WebSocketHandler{
-		webSocketUpgrader: wsUpgrader,
-		maximumPlayerSize: maxPlayerSize,
-		playerService:     playerService,
+		webSocketUpgrader:    wsUpgrader,
+		maximumPlayerSize:    maxPlayerSize,
+		playerService:        playerService,
+		socketCommandHandler: &command.CommandHandler{},
 	}
 }
 
@@ -42,25 +45,8 @@ func (w *WebSocketHandler) Handle(c *gin.Context) {
 		return
 	}
 
-	_, message, err := ws.ReadMessage()
-	if err != nil {
-		logrus.Error("Client failed to identify him self.")
-		ws.Close()
-		return
-	}
-	messageStr := string(message)
-	logrus.Info(messageStr)
-	playerData, err := w.playerService.RegisterPlayer(messageStr)
-	if err != nil {
-		logrus.Error("Client failed to register as Player. ", err)
-		ws.Close()
-	}
-	logrus.Info(fmt.Sprintf("A Client Connected, Identified as %s (%s)", playerData.Name, playerData.ID))
-	go HandleWebSocketConnection(ws)
-}
+	socketConnection := socketconnection.NewSocketConnection(ws, w.socketCommandHandler)
 
-func HandleWebSocketConnection(ws *websocket.Conn) {
-	for {
-		ws.ReadMessage()
-	}
+	logrus.Infof("A Client Connected with ID %s.", socketConnection.ID)
+	go socketConnection.HandlePlayerController()
 }
