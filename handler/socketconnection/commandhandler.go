@@ -19,14 +19,10 @@ type CommandHandler struct {
 }
 
 func (s *CommandHandler) Handle(wsConn *SocketConnection, socketCommand model.SocketCommand) error {
-	logrus.Info("handling: ", socketCommand.Command)
 	if socketCommand.Command == "" {
 		logrus.Error("No Command")
 		return nil
 	}
-	logrus.Info("handling: ", socketCommand.Command)
-
-	logrus.Info("handling: ", socketCommand.Command)
 	switch socketCommand.Command {
 	case "REGISTER":
 		var registerAttributes RegisterCommandAttributes

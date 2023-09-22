@@ -97,6 +97,7 @@ func (s *SocketConnection) HandlePlayerController() {
 }
 
 func (s *SocketConnection) HandleIncomingMessage() {
+	defer s.SpawnController.SetValue(true)
 	socketCommand := model.SocketCommand{}
 	err := s.Conn.ReadJSON(&socketCommand)
 	if err != nil {
@@ -104,9 +105,9 @@ func (s *SocketConnection) HandleIncomingMessage() {
 		return
 	}
 
-	//if socketCommand.Command == "" {
-	//	return
-	//}
+	if socketCommand.Command == "" {
+		return
+	}
 
 	err = s.SocketCommandHandler.Handle(s, socketCommand)
 	if err != nil {
@@ -116,7 +117,6 @@ func (s *SocketConnection) HandleIncomingMessage() {
 
 	// TODO: Implement Error Rate client kick.
 
-	s.SpawnController.SetValue(true)
 }
 
 type Strategy interface {
