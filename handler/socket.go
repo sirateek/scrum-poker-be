@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/sirateek/poker-be/handler/socketconnection"
-	"github.com/sirateek/poker-be/internal/command"
 	"github.com/sirateek/poker-be/internal/player"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -13,7 +12,7 @@ import (
 type WebSocketHandler struct {
 	webSocketUpgrader    websocket.Upgrader
 	playerService        player.Service
-	socketCommandHandler *command.CommandHandler
+	socketCommandHandler *socketconnection.CommandHandler
 	maximumPlayerSize    int
 }
 
@@ -32,7 +31,7 @@ func NewWebSocketHandler(maxPlayerSize int, playerService player.Service) *WebSo
 		webSocketUpgrader:    wsUpgrader,
 		maximumPlayerSize:    maxPlayerSize,
 		playerService:        playerService,
-		socketCommandHandler: &command.CommandHandler{},
+		socketCommandHandler: &socketconnection.CommandHandler{},
 	}
 }
 

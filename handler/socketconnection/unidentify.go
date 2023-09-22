@@ -2,6 +2,7 @@ package socketconnection
 
 import (
 	"errors"
+	"github.com/sirateek/poker-be/model"
 	"github.com/sirupsen/logrus"
 	"time"
 )
@@ -11,20 +12,17 @@ var (
 )
 
 type UnidentifyStrategy struct {
-	socketCommandHandler *SocketCommandHandler
 }
 
-func NewUnidentifyStrategy(socketCommandHandler *SocketCommandHandler) Strategy {
-	return &UnidentifyStrategy{
-		socketCommandHandler: socketCommandHandler,
-	}
+func NewUnidentifyStrategy() Strategy {
+	return &UnidentifyStrategy{}
 }
 
 func (u UnidentifyStrategy) Handle(s *SocketConnection) error {
 	isSendIdentifyYourSelf := false
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 50; i++ {
 		if !isSendIdentifyYourSelf {
-			s.Conn.WriteJSON(SocketCommand{
+			s.Conn.WriteJSON(model.SocketCommand{
 				Command: "IDENTIFY_U_R_SELF",
 			})
 			isSendIdentifyYourSelf = true
@@ -43,6 +41,5 @@ func (u UnidentifyStrategy) Handle(s *SocketConnection) error {
 }
 
 func (u UnidentifyStrategy) NextState(s *SocketConnection) (Strategy, error) {
-	//TODO implement me
-	panic("implement me")
+	return nil, nil
 }

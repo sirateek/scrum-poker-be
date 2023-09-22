@@ -18,19 +18,19 @@ type SocketConnection struct {
 	Conn                     *websocket.Conn
 	Player                   *model.Player
 	HandlerStrategy          Strategy
-	SocketCommandHandler     *SocketCommandHandler
+	SocketCommandHandler     *CommandHandler
 	IncomingGoRoutineContext GoRoutineContext
 	CommandErrorRate         int
 	SpawnController          SpawnController
 }
 
-func NewSocketConnection(wsConn *websocket.Conn, socketCommandHandler *SocketCommandHandler) *SocketConnection {
+func NewSocketConnection(wsConn *websocket.Conn, socketCommandHandler *CommandHandler) *SocketConnection {
 	connID := utils.RandStr(10)
 
 	return &SocketConnection{
 		ID:                   connID,
 		Conn:                 wsConn,
-		HandlerStrategy:      NewUnidentifyStrategy(socketCommandHandler),
+		HandlerStrategy:      NewUnidentifyStrategy(),
 		SocketCommandHandler: socketCommandHandler,
 		CommandErrorRate:     0,
 		SpawnController:      SpawnController{},
@@ -44,6 +44,7 @@ func (s *SocketConnection) HandlePlayerController() {
 		Context: cancelCtx,
 		Cancel:  cancel,
 	}
+	s.SpawnController.SetValue(true)
 
 	// HandleIncoming Message
 	go func() {
@@ -60,6 +61,7 @@ func (s *SocketConnection) HandlePlayerController() {
 				if !s.SpawnController.GetShouldSpawn() {
 					continue
 				}
+				logrus.Infof("Spawned the handler")
 				s.SpawnController.SetValue(false)
 				go s.HandleIncomingMessage()
 			}
@@ -95,19 +97,18 @@ func (s *SocketConnection) HandlePlayerController() {
 }
 
 func (s *SocketConnection) HandleIncomingMessage() {
-	command := SocketCommand{}
-	_, message, err := s.Conn.ReadMessage()
-	logrus.Debug(string(message))
-
+	socketCommand := model.SocketCommand{}
+	err := s.Conn.ReadJSON(&socketCommand)
 	if err != nil {
 		logrus.Error(err)
-	}
-
-	if command.Command == "" {
 		return
 	}
 
-	err = s.SocketCommandHandler.Handle(s, command)
+	//if socketCommand.Command == "" {
+	//	return
+	//}
+
+	err = s.SocketCommandHandler.Handle(s, socketCommand)
 	if err != nil {
 		logrus.Error(err)
 		s.CommandErrorRate++
