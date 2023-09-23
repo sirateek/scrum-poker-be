@@ -61,6 +61,7 @@ func (s *SocketConnection) HandlePlayerController() {
 				if !s.SpawnController.GetShouldSpawn() {
 					continue
 				}
+
 				logrus.Infof("Spawned the handler")
 				s.SpawnController.SetValue(false)
 				go s.HandleIncomingMessage()

@@ -18,6 +18,7 @@ type roomService struct {
 	rooms         map[string]*model.Room
 	deckService   deck.Service
 	playerService player.Service
+	playerRoomMap map[*model.Player]*model.Room
 }
 
 type Service interface {
@@ -31,6 +32,7 @@ func NewService(deckService deck.Service, playerService player.Service) Service 
 		deckService:   deckService,
 		playerService: playerService,
 		rooms:         map[string]*model.Room{},
+		playerRoomMap: make(map[*model.Player]*model.Room),
 	}
 }
 

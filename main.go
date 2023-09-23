@@ -2,11 +2,7 @@ package main
 
 import (
 	"fmt"
-	gqlHandler "github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/gin-gonic/gin"
 	"github.com/sirateek/poker-be/config"
-	"github.com/sirateek/poker-be/graph"
 	"github.com/sirateek/poker-be/handler"
 	"github.com/sirateek/poker-be/internal/deck"
 	"github.com/sirateek/poker-be/internal/player"
@@ -39,20 +35,11 @@ func main() {
 	// Utils
 	contextManager := utils.ContextManager{}
 
-	if appConfig.Env != "prod" {
-		server.Engine.GET("/playground", gin.WrapH(playground.Handler("GraphQL playground", "/query")))
-	}
-
 	socketHandler := handler.NewWebSocketHandler(appConfig.AppConfig.MaximumPlayer, playerService)
-	nonGraphHandler := handler.NonGraphHandler{}
-	taskGqlHandler := gqlHandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &handler.Resolver{
-		DeckService:    deckService,
-		RoomService:    roomService,
-		PlayerService:  playerService,
-		ContextManager: contextManager,
-	}}))
-	server.Engine.POST("/query", handler.UseAuth(contextManager), gin.WrapH(taskGqlHandler))
-	server.Engine.POST("/register", nonGraphHandler.RegisterPlayerHandler)
+
+	handler.NewDeck(server.Engine.Group("/deck"), deckService)
+	handler.NewPlayer(server.Engine.Group("/player"), playerService)
+	handler.NewRoom(server.Engine.Group("/room"), roomService, contextManager)
 
 	// Socket
 	server.Engine.GET("/ws", socketHandler.Handle)
